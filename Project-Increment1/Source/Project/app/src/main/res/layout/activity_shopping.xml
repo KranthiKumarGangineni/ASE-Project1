@@ -19,13 +19,33 @@
 
     <Button
         android:id="@+id/logoutButton"
+        style="@android:style/Widget.Holo.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="60dp"
-        android:text="LogOut"
-        android:onClick="logout"/>
+        android:onClick="logout"
+        android:text="Logout"
+        android:textColor="@color/colorAccent"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/userprofile"
+        style="@android:style/Widget.Holo.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/logoutButton"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="10dp"
+        android:onClick="editUserProfile"
+        android:text="My Profile"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

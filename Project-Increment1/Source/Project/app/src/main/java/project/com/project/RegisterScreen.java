@@ -1,6 +1,7 @@
 package project.com.project;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -26,6 +27,9 @@ public class RegisterScreen extends AppCompatActivity {
 
     private static final String EMAIL_PATTERN = "^(.+)@(.+)$";
 
+    // Database Helper
+    DatabaseHelper dbHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,8 @@ public class RegisterScreen extends AppCompatActivity {
         registerPassword = findViewById(R.id.registerPassword);
         registerConfirmPassword = findViewById(R.id.registerConfirmPassword);
         displayText = findViewById(R.id.displayText);
+
+        dbHelper = new DatabaseHelper(this);
     }
 
     // On SignUp Click
@@ -60,9 +66,29 @@ public class RegisterScreen extends AppCompatActivity {
             displayText.setText("Please enter Valid Email,Ex: Kranthi@gmail.com");
             displayText.setVisibility(View.VISIBLE);
         } else {
-            // Setting Successful Message
-            displayText.setText("You '" + registerEmail.getText().toString() + "' have successfully signed up, LOGIN to continue");
-            displayText.setVisibility(View.VISIBLE);
+            // Checking If User already exist
+            Cursor userDetail = dbHelper.checkIfUserExist(registerEmail.getText().toString());
+            if(userDetail.getCount() == 0){
+                boolean isInsertSuccessful = dbHelper.insertData(registerFirstName.getText().toString(),
+                        registerLastName.getText().toString(), registerEmail.getText().toString(),
+                        registerPassword.getText().toString());
+                // If Insertion is Successful, return proper message to let the User know
+                // that he got signed Up Successfully
+                if (isInsertSuccessful) {
+                    // Setting Successful Message
+                    displayText.setText("You '" + registerEmail.getText().toString() + "' have successfully signed up, LOGIN to continue");
+                    displayText.setVisibility(View.VISIBLE);
+                }else{
+                    // Setting Successful Message
+                    displayText.setText("SignUp is unsuccessful due to some technical Issues, Please try again later");
+                    displayText.setVisibility(View.VISIBLE);
+                }
+            }else {
+                // If User Already Exist
+                // Throwing Error
+                displayText.setText("You '" + registerEmail.getText().toString() + "' have already signed up, Please LOGIN to continue");
+                displayText.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -87,7 +113,7 @@ public class RegisterScreen extends AppCompatActivity {
         registerEmail.setText("");
         registerPassword.setText("");
         registerConfirmPassword.setText("");
-	displayText.setText("");
+        displayText.setText("");
         displayText.setVisibility(View.INVISIBLE);
     }
 }
