@@ -1,2 +1,3 @@
 # ASE-Project1
-This is first project of ASE
+
+Project proposal : https://github.com/KranthiKumarGangineni/ASE-Project1/blob/master/Team%20alpha_proposal.pptx
