@@ -65,4 +65,10 @@ public class ShoppingScreen extends AppCompatActivity {
         intent.putExtra("emailId",emailId);
         startActivity(intent);
     }
+
+
+    public void getStores(View view){
+        Intent intent = new Intent(ShoppingScreen.this,Stores.class);
+        startActivity(intent);
+    }
 }

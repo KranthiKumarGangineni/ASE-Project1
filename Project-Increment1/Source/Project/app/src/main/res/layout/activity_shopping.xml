@@ -48,4 +48,15 @@
         android:textStyle="bold"
         android:visibility="invisible"/>
 
+    <Button
+        android:id="@+id/maps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/logoutButton"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:background="@android:color/black"
+        android:text="Get Stores Near me"
+        android:textColor="@color/colorAccent" />
+
 </RelativeLayout>
