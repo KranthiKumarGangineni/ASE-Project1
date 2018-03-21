@@ -166,6 +166,7 @@ public class ShoppingScreen extends AppCompatActivity {
                                             Intent intent = new Intent(ShoppingScreen.this, RecipeScreen.class);
                                             try {
                                                 Recipe recipe = new Recipe();
+                                                recipe.setEmailId(emailId);
                                                 recipe.setSourceName(recipeSource);
                                                 recipe.setSourceURL(recipeSourceURL);
                                                 recipe.setRecipeName(recipeName);

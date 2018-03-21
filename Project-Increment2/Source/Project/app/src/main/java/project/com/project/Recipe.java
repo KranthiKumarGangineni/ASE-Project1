@@ -19,6 +19,15 @@ public class Recipe implements Serializable{
     private static transient Bitmap bitmap;
     private Integer caloriePerServing;
     private Integer peopleServes;
+    private String emailId;
+
+    public String getEmailId() {
+        return emailId;
+    }
+
+    public void setEmailId(String emailId) {
+        this.emailId = emailId;
+    }
 
     public Integer getCaloriePerServing() {
         return caloriePerServing;

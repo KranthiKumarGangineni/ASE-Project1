@@ -1,12 +1,14 @@
 package project.com.project;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -31,6 +33,7 @@ public class RecipeScreen extends AppCompatActivity {
     TextView recipeSourceURLView;
     TextView recipeIngredientsView;
     RatingBar ratingBar;
+    DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +45,12 @@ public class RecipeScreen extends AppCompatActivity {
         recipeSourceURLView = findViewById(R.id.fullRecipe);
         recipeIngredientsView = findViewById(R.id.ingredients);
         ratingBar = findViewById(R.id.ratingBar);
+        dbHelper = new DatabaseHelper(this);
 
         try {
             Intent intent = getIntent();
 
-            Recipe recipe = (Recipe) intent.getExtras().getSerializable("recipeObj");
-
-            // Using Hardcoded ratings as of now
-            ratingBar.setRating(Float.parseFloat("4.0"));
+            final Recipe recipe = (Recipe) intent.getExtras().getSerializable("recipeObj");
 
             recipeImageView.setImageBitmap(recipe.getBitmap());
             recipeNameView.setText(recipe.getRecipeName());
@@ -73,8 +74,41 @@ public class RecipeScreen extends AppCompatActivity {
             recipeIngredientsView.setText(Html.fromHtml(stringBuilder.toString()));
 
 
+            // Check if Rating is Present for the user and the selected Recipe Combination.
+            Cursor recipeRating = dbHelper.checkRatingOfRecipe(recipe.getEmailId(),recipe.getRecipeName(),recipe.getSourceName());
+
+            if(recipeRating.getCount() != 0){
+                // Set ratings given by user
+                while (recipeRating.moveToNext()) {
+                    ratingBar.setRating(Float.parseFloat(recipeRating.getString(4)));
+                }
+            }
+
+            ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                    // When User Modified Rating or added a Rating..
+                    String rateValue = String.valueOf(ratingBar.getRating());
+                    // Insert/Update User Rating..
+                    Cursor recipeRating = dbHelper.checkRatingOfRecipe(recipe.getEmailId(),recipe.getRecipeName(),recipe.getSourceName());
+                    if(recipeRating.getCount() == 0){
+                        // No records found, Insert
+                        dbHelper.insertRecipeRating(recipe.getEmailId(),recipe.getRecipeName(),recipe.getSourceName(),rateValue);
+                    }else{
+                        // Update Rating
+                        dbHelper.updateRecipeRating(recipe.getEmailId(),recipe.getRecipeName(),recipe.getSourceName(),rateValue);
+                    }
+                }
+            });
+
+
         }catch (JSONException jsex) {
             jsex.printStackTrace();
         }
+    }
+
+    public void getNearByLocations(View view){
+        Intent intent = new Intent(RecipeScreen.this, MapsActivity.class);
+        startActivity(intent);
     }
 }

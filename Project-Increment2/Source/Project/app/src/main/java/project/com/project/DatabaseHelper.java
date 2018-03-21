@@ -27,8 +27,15 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     private static final String RECIPE_COLUMN_1 = "RECIPE_NAME";
     private static final String RECIPE_COLUMN_2 = "RECIPE_TYPE";
 
+    // Recipe Rating Table
+    private static final String RECIPE_RATING_TABLE_NAME = "RECIPE_RATING";
+    private static final String RECIPE_RATING_COLUMN_1 = "RECIPE_NAME";
+    private static final String RECIPE_RATING_COLUMN_2 = "SOURCE_NAME";
+    private static final String RECIPE_RATING_COLUMN_3 = "EMAIL_ADDRESS";
+    private static final String RECIPE_RATING_COLUMN_4 = "RECIPE_RATING";
+
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 3);
+        super(context, DATABASE_NAME, null, 4);
     }
 
     @Override
@@ -41,6 +48,10 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         db.execSQL("create table " + RECIPE_TABLE_NAME +" (ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "RECIPE_NAME TEXT,RECIPE_TYPE TEXT)");
 
+        // Creating Recipe Table
+        db.execSQL("create table " + RECIPE_RATING_TABLE_NAME +" (ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "RECIPE_NAME TEXT,SOURCE_NAME TEXT,EMAIL_ADDRESS TEXT,RECIPE_RATING TEXT)");
+
         // Non-Veg
         insertRecipe(db);
     }
@@ -50,6 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         // On DB Upgrade, Dropping and Creating Table Again
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS "+RECIPE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS "+RECIPE_RATING_TABLE_NAME);
         onCreate(db);
     }
 
@@ -100,7 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         contentValues.put(COLUMN_2,lastName);
         contentValues.put(COLUMN_3,emailId.toLowerCase());
         contentValues.put(COLUMN_4,password);
-        // Inserting the Data, Return Type will be 'long'
+        // Updating the Data, Return Type will be 'long'
         long result = db.update(TABLE_NAME,contentValues ,filter,null);
         if(result == -1) {
             //f Insert haven't happened properly, it will return a "long" value '-1'
@@ -169,4 +181,61 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         }
         return recipeList;
     }
+
+    // Check if Recipe Rating is present for the Input user,RecipeName,SourceName
+    public Cursor checkRatingOfRecipe(String emailId,String recipeName, String sourceName){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from "+RECIPE_RATING_TABLE_NAME+" where LOWER(EMAIL_ADDRESS) = '"+emailId.toLowerCase()
+                        +"' AND RECIPE_NAME ='"+recipeName+"' AND SOURCE_NAME = '"+sourceName+"'"
+                ,null);
+        return res;
+    }
+
+
+    // Inserting Rating Data
+    public boolean insertRecipeRating(String emailId,String recipeName, String sourceName, String rating) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(RECIPE_RATING_COLUMN_1,recipeName);
+        contentValues.put(RECIPE_RATING_COLUMN_2,sourceName);
+        contentValues.put(RECIPE_RATING_COLUMN_3,emailId);
+        contentValues.put(RECIPE_RATING_COLUMN_4,rating);
+        // Inserting the Data, Return Type will be 'long'
+        long result = db.insert(RECIPE_RATING_TABLE_NAME,null ,contentValues);
+        if(result == -1) {
+            //f Insert haven't happened properly, it will return a "long" value '-1'
+            // as Output
+            return false;
+        }
+        else {
+            // If Insertion is Successful
+            return true;
+        }
+    }
+
+    // Updating Rating Data
+    public boolean updateRecipeRating(String emailId,String recipeName, String sourceName, String rating) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(RECIPE_RATING_COLUMN_1,recipeName);
+        contentValues.put(RECIPE_RATING_COLUMN_2,sourceName);
+        contentValues.put(RECIPE_RATING_COLUMN_3,emailId);
+        contentValues.put(RECIPE_RATING_COLUMN_4,rating);
+        // Inserting the Data, Return Type will be 'long'
+
+        String filter = "LOWER(EMAIL_ADDRESS) = '"+emailId.toLowerCase()
+                +"' AND RECIPE_NAME ='"+recipeName+"' AND SOURCE_NAME = '"+sourceName+"'";
+        // Updating the Data, Return Type will be 'long'
+        long result = db.update(RECIPE_RATING_TABLE_NAME,contentValues ,filter,null);
+        if(result == -1) {
+            //f Insert haven't happened properly, it will return a "long" value '-1'
+            // as Output
+            return false;
+        }
+        else {
+            // If Insertion is Successful
+            return true;
+        }
+    }
+
 }
