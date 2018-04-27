@@ -133,7 +133,7 @@ public class RecipeScreen extends AppCompatActivity {
 
             // Querying for HashTag
             Query query = new Query("#"+ StringUtils.normalizeSpace(recipe.getRecipeName()));
-            query.setCount(5);
+            query.setCount(6);
 
             /*QueryResult result = twitter.search(query);
             for (Status status : result.getTweets()) {
@@ -160,6 +160,11 @@ public class RecipeScreen extends AppCompatActivity {
 
     public void getNearByLocations(View view){
         Intent intent = new Intent(RecipeScreen.this, MapsActivity.class);
+        startActivity(intent);
+    }
+
+    public void showArDisplay(View view){
+        Intent intent = new Intent(RecipeScreen.this,UnityPlayerProxyActivity.class);
         startActivity(intent);
     }
 }
